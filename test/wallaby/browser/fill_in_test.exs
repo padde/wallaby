@@ -1,12 +1,21 @@
-defmodule Wallaby.Actions.FillInTest do
+defmodule Wallaby.Browser.FillInTest do
   use Wallaby.SessionCase, async: true
 
-  setup %{server: server, session: session} do
+  setup %{session: session} do
     page =
       session
-      |> visit(server.base_url <> "forms.html")
+      |> visit("forms.html")
 
     {:ok, %{page: page}}
+  end
+
+  test "fill_in/2 accepts a query", %{page: page} do
+    page
+    |> fill_in(Query.text_field("name"), with: "Chris")
+
+    assert page
+    |> find(Query.text_field("name"))
+    |> has_value?("Chris")
   end
 
   test "filling in input by name", %{page: page} do
@@ -52,15 +61,13 @@ defmodule Wallaby.Actions.FillInTest do
   end
 
   test "checks for labels without for attributes", %{page: page} do
-    msg = Wallaby.QueryError.error_message(:label_with_no_for, %{locator: {:fillable_field, "Input with bad label"}})
-    assert_raise Wallaby.QueryError, msg, fn ->
+    assert_raise Wallaby.QueryError, ~r/label has no 'for'/, fn ->
       fill_in(page, "Input with bad label", with: "Test")
     end
   end
 
   test "checks for mismatched ids on labels", %{page: page} do
-    msg = Wallaby.QueryError.error_message({:label_does_not_find_field, "input-with-bad-id"}, %{locator: {:fillable_field, "Input with bad id"}})
-    assert_raise Wallaby.QueryError, msg, fn ->
+    assert_raise Wallaby.QueryError, ~r/but the label's 'for' attribute/, fn ->
       fill_in(page, "Input with bad id", with: "Test")
     end
   end

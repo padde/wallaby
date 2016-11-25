@@ -77,6 +77,8 @@ defmodule Wallaby.Phantom.Server do
   end
 
   def handle_info(_msg, state) do
+    # IO.puts "Got some info"
+    # IO.inspect(_msg)
     {:noreply, state}
   end
 

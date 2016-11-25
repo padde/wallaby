@@ -1,15 +1,15 @@
-defmodule Wallaby.DSL.Actions.CheckTest do
+defmodule Wallaby.Browser.CheckTest do
   use Wallaby.SessionCase, async: true
 
-  setup %{session: session, server: server} do
+  setup %{session: session} do
     page =
       session
-      |> visit(server.base_url <> "forms.html")
+      |> visit("forms.html")
 
     {:ok, page: page}
   end
 
-  test "check/1 checks the specified node", %{page: page} do
+  test "check/1 checks the specified element", %{page: page} do
     checkbox =
       page
       |> find("#checkbox1")
@@ -20,7 +20,7 @@ defmodule Wallaby.DSL.Actions.CheckTest do
     refute checked?(checkbox)
   end
 
-  test "check/2 does not uncheck the node if called twice", %{page: page} do
+  test "check/2 does not uncheck the element if called twice", %{page: page} do
     page
     |> check("Checkbox 1")
     |> check("Checkbox 1")
@@ -28,14 +28,14 @@ defmodule Wallaby.DSL.Actions.CheckTest do
     assert find(page, "#checkbox1") |> checked?
   end
 
-  test "uncheck/2 does not check the node", %{page: page} do
+  test "uncheck/2 does not check the element", %{page: page} do
     page
     |> uncheck("Checkbox 1")
 
     refute find(page, "#checkbox1") |> checked?
   end
 
-  test "check/2 finds the node by label", %{page: page} do
+  test "check/2 finds the element by label", %{page: page} do
     page
     |> check("Checkbox 1")
 
@@ -44,7 +44,7 @@ defmodule Wallaby.DSL.Actions.CheckTest do
     refute find(page, "#checkbox1") |> checked?
   end
 
-  test "check/2 finds the node by id", %{page: page} do
+  test "check/2 finds the element by id", %{page: page} do
     page
     |> check("checkbox1")
 
@@ -53,7 +53,7 @@ defmodule Wallaby.DSL.Actions.CheckTest do
     refute find(page, "#checkbox1") |> checked?
   end
 
-  test "check/2 finds the node by name", %{page: page} do
+  test "check/2 finds the element by name", %{page: page} do
     page
     |> check("testbox")
 
@@ -74,5 +74,31 @@ defmodule Wallaby.DSL.Actions.CheckTest do
 
   test "escapes quotes", %{page: page} do
     assert check(page, "I'm a checkbox")
+  end
+
+  describe "check/2" do
+    test "works with checkbox queries", %{page: page} do
+      assert page
+      |> check( Query.checkbox("Checkbox 1") )
+    end
+
+    test "works with css queries", %{page: page} do
+      assert page
+      |> check( Query.css("#checkbox1") )
+    end
+  end
+
+  describe "uncheck/2" do
+    test "works with checkbox queries", %{page: page} do
+      assert page
+      |> check( Query.checkbox("Checkbox 1") )
+      |> uncheck( Query.checkbox("Checkbox 1") )
+    end
+
+    test "works with css queries", %{page: page} do
+      assert page
+      |> check( Query.css("#checkbox1") )
+      |> uncheck( Query.css("#checkbox1") )
+    end
   end
 end

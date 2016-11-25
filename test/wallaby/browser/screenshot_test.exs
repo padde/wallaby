@@ -1,34 +1,34 @@
-defmodule Wallaby.Session.ScreenshotTest do
+defmodule Wallaby.Browser.ScreenshotTest do
   use Wallaby.SessionCase, async: false
 
-  setup %{server: server, session: session} do
+  setup %{session: session} do
     page =
       session
-      |> visit(server.base_url)
+      |> visit("/")
 
     {:ok, page: page}
   end
 
   test "taking screenshots", %{page: page} do
-    node =
+    element =
       page
       |> take_screenshot
       |> find("#header")
       |> take_screenshot
 
     parent_screenshots =
-      node
+      element
       |> Map.get(:parent)
       |> Map.get(:screenshots)
 
-    node_screenshots =
-      node
+    element_screenshots =
+      element
       |> Map.get(:screenshots)
 
-    assert Enum.count(node_screenshots) == 1
+    assert Enum.count(element_screenshots) == 1
     assert Enum.count(parent_screenshots) == 1
 
-    Enum.each(node_screenshots ++ parent_screenshots, fn(path) ->
+    Enum.each(element_screenshots ++ parent_screenshots, fn(path) ->
       assert File.exists? path
     end)
 

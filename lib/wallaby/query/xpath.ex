@@ -1,4 +1,4 @@
-defmodule Wallaby.XPath do
+defmodule Wallaby.StatelessQuery.XPath do
   @type query :: String.t
   @type xpath :: String.t
   @type name  :: query
@@ -66,5 +66,12 @@ defmodule Wallaby.XPath do
   """
   def file_field(query) do
     ~s{.//input[./@type = 'file'][(((./@id = "#{query}" or ./@name = "#{query}")) or ./@id = //label[contains(normalize-space(string(.)), "#{query}")]/@for)] | .//label[contains(normalize-space(string(.)), "#{query}")]//.//input[./@type = 'file']}
+  end
+
+  @doc """
+  Matches any element by its inner text.
+  """
+  def text(selector) do
+    ~s{.//*[contains(normalize-space(text()), '#{selector}')]}
   end
 end

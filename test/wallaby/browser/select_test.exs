@@ -1,10 +1,10 @@
-defmodule Wallaby.Actions.SelectTest do
+defmodule Wallaby.Browser.SelectTest do
   use Wallaby.SessionCase, async: true
 
-  setup %{session: session, server: server} do
+  setup %{session: session} do
     page =
       session
-      |> visit(server.base_url <> "select_boxes.html")
+      |> visit("select_boxes.html")
 
     {:ok, page: page}
   end
@@ -51,10 +51,10 @@ defmodule Wallaby.Actions.SelectTest do
     end
   end
 
-  test "waits until the select appears", %{session: session, server: server} do
+  test "waits until the select appears", %{session: session} do
     page =
       session
-      |> visit(server.base_url <> "forms.html")
+      |> visit("forms.html")
 
     assert select(page, "Hidden Select", option: "Option")
   end

@@ -1,10 +1,11 @@
-defmodule Wallaby.Actions.ChooseTest do
+defmodule Wallaby.Browser.ChooseTest do
   use Wallaby.SessionCase, async: true
+  alias Wallaby.StatelessQuery, as: Q
 
-  setup %{session: session, server: server} do
+  setup %{session: session} do
     page =
       session
-      |> visit(server.base_url <> "forms.html")
+      |> visit("forms.html")
 
     {:ok, page: page}
   end
@@ -56,5 +57,22 @@ defmodule Wallaby.Actions.ChooseTest do
 
   test "escape quotes", %{page: page} do
     assert choose(page, "I'm a radio button")
+  end
+
+  describe "choose/2" do
+    test "works with radio_button queries", %{page: page} do
+      assert page
+      |> choose( Q.radio_button("Option 1") )
+    end
+
+    test "works with option queries", %{page: page} do
+      assert page
+      |> choose( Q.option("Select Option 1") )
+    end
+
+    test "works with other queries", %{page: page} do
+      assert page
+      |> choose( Q.css("#select-option-1") )
+    end
   end
 end
