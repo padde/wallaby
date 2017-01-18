@@ -1,6 +1,5 @@
 defmodule Wallaby.Browser do
   alias Wallaby.Element
-  alias Wallaby.Phantom.Driver
   alias Wallaby.StatelessQuery
   alias Wallaby.StatelessQuery.ErrorMessage
   alias Wallaby.Session
@@ -707,9 +706,9 @@ defmodule Wallaby.Browser do
       uri.host == nil && String.length(base_url) == 0 ->
         raise Wallaby.NoBaseUrl, path
       uri.host ->
-        Driver.visit(session, path)
+        driver().visit(session, path)
       true ->
-        Driver.visit(session, request_url(path))
+        driver().visit(session, request_url(path))
     end
 
     session
@@ -825,5 +824,9 @@ defmodule Wallaby.Browser do
   end
 
   defp deprecate(method, new_method) do
+  end
+
+  def driver() do
+    Application.get_env(:wallaby, :driver)
   end
 end

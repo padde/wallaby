@@ -1,4 +1,4 @@
-defmodule Wallaby.Browser.FillInTest do
+defmodule Wallaby.Browser.ExtendedActions.FillInTest do
   use Wallaby.SessionCase, async: true
 
   setup %{session: session} do
@@ -74,5 +74,20 @@ defmodule Wallaby.Browser.FillInTest do
 
   test "escapes quotes", %{page: page} do
     assert fill_in(page, "I'm a text field", with: "Stuff")
+  end
+
+  describe "fill_in/2" do
+    setup do
+      {:ok, session} = Wallaby.Browser.start_session()
+
+      {:ok, %{page: session}}
+    end
+
+    test "with a stale element", %{page: page} do
+      assert_raise Wallaby.StaleElementReferenceException, fn ->
+        stale_element = %Wallaby.Element{id: "stale"}
+        fill_in(stale_element, with: "test")
+      end
+    end
   end
 end
