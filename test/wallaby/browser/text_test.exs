@@ -20,4 +20,13 @@ defmodule Wallaby.Browser.TextTest do
 
     assert text == "The Parent\nThe Child"
   end
+
+  test "can get the text of a query", %{session: session} do
+    text =
+      session
+      |> visit("/")
+      |> text(Query.css("#parent"))
+
+    assert text == "The Parent\nThe Child"
+  end
 end

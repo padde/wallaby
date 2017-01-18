@@ -67,6 +67,8 @@ defmodule Wallaby.Browser do
     parent
     |> find(query)
     |> fill_in(with: value)
+
+    parent
   end
   def fill_in(%Element{}=element, with: value) when is_number(value) do
     fill_in(element, with: to_string(value))
@@ -206,7 +208,6 @@ defmodule Wallaby.Browser do
   @spec click_link(parent, StatelessQuery.t) :: parent
   @spec click_link(parent, locator, opts) :: parent
 
-  # TODO: Untested
   def click_link(parent, locator, opts) when is_binary(locator) do
     parent
     |> find(StatelessQuery.link(locator, opts))
@@ -238,26 +239,6 @@ defmodule Wallaby.Browser do
     |> click
   end
   def click_button(parent, query) do
-    click(parent, query)
-  end
-
-  @doc """
-  Clicks on the matching button. Alias for `click_button`.
-  """
-  @spec click_on(parent, StatelessQuery.t) :: parent
-  @spec click_on(parent, locator, opts) :: parent
-
-  def click_on(parent, locator, opts) when is_binary(locator) do
-    parent
-    |> find(StatelessQuery.button(locator, opts))
-    |> click
-  end
-  def click_on(parent, locator) when is_binary(locator) do
-    parent
-    |> find(StatelessQuery.button(locator, []))
-    |> click
-  end
-  def click_on(parent, query) do
     click(parent, query)
   end
 
@@ -324,16 +305,8 @@ defmodule Wallaby.Browser do
   @doc """
   Gets the size of the session's window.
   """
-  @spec get_window_size(parent) :: %{String.t => pos_integer, String.t => pos_integer}
+  @spec window_size(parent) :: %{String.t => pos_integer, String.t => pos_integer}
 
-  def get_window_size(session) do
-    deprecate(:get_window_size, :window_size)
-    window_size(session)
-  end
-
-  # TODO: Test
-  # TODO: Spec
-  # TODO: Validate errors
   def window_size(session) do
     {:ok, size} = Driver.get_window_size(session)
     size
@@ -342,16 +315,6 @@ defmodule Wallaby.Browser do
   @doc """
   Sets the size of the sessions window.
   """
-  @spec set_window_size(parent, pos_integer, pos_integer) :: parent
-
-  def set_window_size(session, width, height) do
-    {:ok, _} = Driver.set_window_size(session, width, height)
-    session
-  end
-
-  # TODO: Test
-  # TODO: Spec
-  # TODO: Validate errors
   @spec resize_window(parent, pos_integer, pos_integer) :: parent
 
   def resize_window(session, width, height) do
@@ -362,20 +325,8 @@ defmodule Wallaby.Browser do
   @doc """
   Gets the current url of the session
   """
-  @spec get_current_url(parent) :: String.t
-
-  # TODO: Untested
-  def get_current_url(session) do
-    Driver.current_url!(session)
-  end
-
-  @doc """
-  Gets the current url of the session
-  """
   @spec current_url(parent) :: String.t
 
-  # TODO: Untested
-  # TODO: Validate errors
   def current_url(parent) do
     Driver.current_url!(parent)
   end
@@ -383,21 +334,8 @@ defmodule Wallaby.Browser do
   @doc """
   Gets the current path of the session
   """
-  @spec get_current_path(parent) :: String.t
-
-  # TODO: Untested
-  # TODO: Validate errors
-  def get_current_path(session) do
-    Driver.current_path!(session)
-  end
-
-  @doc """
-  Gets the current path of the session
-  """
   @spec current_path(parent) :: String.t
 
-  # TODO: Untested
-  # TODO: Validate errors
   def current_path(parent) do
     Driver.current_path!(parent)
   end
@@ -407,7 +345,6 @@ defmodule Wallaby.Browser do
   """
   @spec page_title(parent) :: String.t
 
-  # TODO: Validate errors
   def page_title(session) do
     {:ok, title} = Driver.page_title(session)
     title
@@ -419,14 +356,14 @@ defmodule Wallaby.Browser do
   """
   @spec execute_script(parent, String.t, list) :: parent
 
-  # TODO: Validate errors
   def execute_script(session, script, arguments \\ []) do
     {:ok, value} = Driver.execute_script(session, script, arguments)
     value
   end
 
   @doc """
-  Sends a list of key strokes to active element. Keys should be provided as a
+  Sends a list of key strokes to active element. If strings are included
+  then they are sent as individual keys. Special keys should be provided as a
   list of atoms, which are automatically converted into the corresponding key
   codes.
 
@@ -434,14 +371,13 @@ defmodule Wallaby.Browser do
 
   ## Example
 
+      iex> Wallaby.Session.send_keys(session, ["Example Text", :enter])
       iex> Wallaby.Session.send_keys(session, [:enter])
       iex> Wallaby.Session.send_keys(session, [:shift, :enter])
   """
   @spec send_keys(parent, list(atom)) :: parent
   @spec send_keys(parent, StatelessQuery.t, list(atom)) :: parent
 
-  # TODO: untested
-  # TODO: Validate errors
   def send_keys(parent, query, list) do
     parent
     |> find(query)
@@ -451,24 +387,6 @@ defmodule Wallaby.Browser do
   def send_keys(parent, keys) when is_list(keys) do
     {:ok, _} = Driver.send_keys(parent, keys)
     parent
-  end
-
-  @doc """
-  Sends text characters to the active element
-  """
-  @spec send_text(parent, String.t) :: parent
-  @spec send_text(parent, StatelessQuery.t, String.t) :: parent
-
-  # TODO: untested
-  def send_text(parent, query, text) do
-    parent
-    |> find(query)
-    |> click()
-    |> send_text(text)
-  end
-  def send_text(session, text) do
-    {:ok, _} = Driver.send_text(session, text)
-    session
   end
 
   @doc """
@@ -501,6 +419,7 @@ defmodule Wallaby.Browser do
   end
   def click(element) do
     Driver.click(element)
+
     element
   end
 
@@ -510,8 +429,6 @@ defmodule Wallaby.Browser do
   @spec text(parent) :: String.t
   @spec text(parent, StatelessQuery.t) :: String.t
 
-  # TODO: Test this shit
-  # TODO: Validate error handling
   def text(parent, query) do
     parent
     |> find(query)

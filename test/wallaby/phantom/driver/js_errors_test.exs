@@ -7,7 +7,7 @@ defmodule Wallaby.Phantom.Driver.JSErrorsTest do
     assert_raise Wallaby.JSError, fn ->
       session
       |> visit("/errors.html")
-      |> click_on("Throw an Error")
+      |> click_button("Throw an Error")
     end
   end
 
@@ -28,7 +28,7 @@ defmodule Wallaby.Phantom.Driver.JSErrorsTest do
     fun = fn ->
       session
       |> visit("/logs.html")
-      |> click_on("Print Log")
+      |> click_button("Print Log")
     end
 
     assert capture_io(fun) == output

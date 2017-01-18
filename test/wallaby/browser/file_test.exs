@@ -48,4 +48,15 @@ defmodule Wallaby.Browser.FileTest do
   test "escapes quotes", %{page: page} do
     assert attach_file(page, "I'm a file field", path: "test/support/fixtures/file.txt")
   end
+
+  describe "attach_file/2" do
+    test "works with queries", %{page: page} do
+      assert page
+      |> attach_file(Query.file_field("File"), path: "test/support/fixtures/file.txt")
+
+      assert page
+      |> find(Query.file_field("File"))
+      |> has_value?("C:\\fakepath\\file.txt")
+    end
+  end
 end

@@ -13,7 +13,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit button")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -22,7 +22,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("button-no-type")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -31,7 +31,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("button-no-type-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -40,7 +40,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit button")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -49,7 +49,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("button-submit")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -58,7 +58,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("button-submit-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -133,7 +133,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("Submit input")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -142,7 +142,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-submit")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -151,7 +151,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-submit-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -226,7 +226,7 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-image")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
@@ -235,13 +235,13 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
     current_url =
       page
       |> click_button("input-image-id")
-      |> get_current_url
+      |> current_url
 
     assert current_url == "http://localhost:#{URI.parse(current_url).port}/index.html"
   end
 
   test "waits until the button appears", %{page: page} do
-    assert click_on(page, "Hidden Button")
+    assert click_button(page, "Hidden Button")
   end
 
   test "throws an error if the button does not include a valid type attribute", %{page: page} do
@@ -263,6 +263,13 @@ defmodule Wallaby.Browser.Actions.ClickButtonTest do
   end
 
   test "escapes quotes", %{page: page} do
-    assert click_on(page, "I'm a button")
+    assert click_button(page, "I'm a button")
+  end
+
+  describe "click_button/2" do
+    test "works with queries", %{page: page} do
+      assert page
+      |> click_button(Query.button("Reset input"))
+    end
   end
 end

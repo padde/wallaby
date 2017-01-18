@@ -12,4 +12,17 @@ defmodule Wallaby.Browser.ClickLinkTest do
 
     assert element
   end
+
+  describe "click_link/2" do
+    setup %{session: session} do
+      page = visit(session, "")
+
+      {:ok, %{page: page}}
+    end
+    
+    test "works with queries", %{page: page} do
+      assert page
+      |> click_link(Query.link("Page 1"))
+    end
+  end
 end

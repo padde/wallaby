@@ -287,17 +287,6 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   @doc """
-  Sends text characters to the active element
-  """
-  def send_text(session, text) do
-    check_logs! session, fn ->
-      with {:ok, resp} <- request(:post, "#{session.session_url}/keys", %{value: [text]}),
-           {:ok, value} <- Map.fetch(resp, "value"),
-        do: {:ok, value}
-    end
-  end
-
-  @doc """
   Retrieves logs from the browser
   """
   def log(session) do

@@ -171,7 +171,7 @@ defmodule Wallaby.StatelessQuery do
     }
   end
 
-  def link(selector, opts) do
+  def link(selector, opts \\ []) do
     %StatelessQuery{
       method: :link,
       selector: selector,
@@ -180,7 +180,7 @@ defmodule Wallaby.StatelessQuery do
     }
   end
 
-  def file_field(selector, opts) do
+  def file_field(selector, opts \\ []) do
     %StatelessQuery{
       method: :file_field,
       selector: selector,

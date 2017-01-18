@@ -62,4 +62,12 @@ defmodule Wallaby.Browser.SelectTest do
   test "escapes quotes", %{page: page} do
     assert select(page, "I'm a select", option: "I'm an option")
   end
+
+  describe "select/2" do
+    test "works with option queries", %{page: page} do
+      assert page
+      |> find(Query.select("My Select"))
+      |> select(Query.option("Option 2"))
+    end
+  end
 end

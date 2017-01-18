@@ -6,7 +6,7 @@ defmodule Wallaby.Phantom.Driver.ConfigurationTest do
 
     session
     |> visit("/errors.html")
-    |> click_on("Throw an Error")
+    |> click_button("Throw an Error")
     |> assert
 
     Application.put_env(:wallaby, :js_errors, true)

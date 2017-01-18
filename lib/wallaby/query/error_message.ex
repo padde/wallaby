@@ -75,6 +75,9 @@ defmodule Wallaby.StatelessQuery.ErrorMessage do
   def method(:select, true), do: "selects"
   def method(:select, false), do: "select"
 
+  def method(:option, true), do: "option fields"
+  def method(:option, false), do: "option"
+
   def method(:fillable_field, true), do: "text inputs or textareas"
   def method(:fillable_field, false), do: "text input or textarea"
 

@@ -2,22 +2,22 @@ defmodule Wallaby.Browser.CurrentPathTest do
   use Wallaby.SessionCase, async: true
 
   test "gets the current_url of the session", %{session: session}  do
-    current_url =
+    url =
       session
       |> visit("")
       |> click_link("Page 1")
-      |> get_current_url
+      |> current_url()
 
-    assert current_url == "http://localhost:#{URI.parse(current_url).port}/page_1.html"
+    assert url == "http://localhost:#{URI.parse(url).port}/page_1.html"
   end
 
   test "gets the current_path of the session", %{session: session}  do
-    current_path =
+    path =
       session
       |> visit("")
       |> click_link("Page 1")
-      |> get_current_path
+      |> current_path
 
-    assert current_path == "/page_1.html"
+    assert path == "/page_1.html"
   end
 end
