@@ -449,8 +449,6 @@ defmodule Wallaby.Browser do
   @spec attr(parent, StatelessQuery.t, String.t) :: String.t | nil
   @spec attr(Element.t, String.t) :: String.t | nil
 
-  # TODO: Untestested
-  # TODO: raise stale element exception
   def attr(element, name) do
     {:ok, attribute} = Driver.attribute(element, name)
     attribute
