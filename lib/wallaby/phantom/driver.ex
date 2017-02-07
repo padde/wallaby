@@ -33,6 +33,8 @@ defmodule Wallaby.Phantom.Driver do
       server: server
     }
 
+    IO.puts "Creating a session"
+
     {:ok, session}
   end
 

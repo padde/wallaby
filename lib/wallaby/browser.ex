@@ -269,14 +269,22 @@ defmodule Wallaby.Browser do
   @spec click_link(parent, locator, opts) :: parent
 
   def click_link(parent, locator, opts) when is_binary(locator) do
+    IO.puts("Clicking link")
+
     parent
     |> find(Query.link(locator, opts))
     |> click
+
+    parent
   end
   def click_link(parent, locator) when is_binary(locator) do
+    IO.puts("Clicking link")
+
     parent
     |> find(Query.link(locator, []))
     |> click
+
+    parent
   end
   def click_link(parent, query) do
     click(parent, query)
@@ -377,6 +385,8 @@ defmodule Wallaby.Browser do
     session
   end
 
+  defdelegate set_window_size(session, width, height), to: __MODULE__, as: :resize_window
+
   @doc """
   Gets the current url of the session
   """
@@ -385,6 +395,8 @@ defmodule Wallaby.Browser do
   def current_url(parent) do
     Driver.current_url!(parent)
   end
+
+  defdelegate get_current_url(parent), to: __MODULE__, as: :current_url
 
   @doc """
   Gets the current path of the session
@@ -444,6 +456,8 @@ defmodule Wallaby.Browser do
     parent
   end
 
+  defdelegate send_text(parent, text), to: __MODULE__, as: :send_keys
+
   @doc """
   Retrieves the source of the current page.
   """
@@ -471,12 +485,16 @@ defmodule Wallaby.Browser do
     parent
     |> find(query)
     |> click()
+
+    parent
   end
   def click(element) do
     Driver.click(element)
 
     element
   end
+
+  defdelegate click_on(parent, query), to: __MODULE__, as: :click
 
   @doc """
   Gets the Element's text value.
@@ -814,8 +832,12 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- Driver.find_elements(parent, {method, selector}),
              {:ok, elements} <- validate_visibility(query, elements),
              {:ok, elements} <- validate_text(query, elements),
-             {:ok, elements} <- validate_count(query, elements),
-         do: {:ok, %Query{query | result: elements}}
+             {:ok, elements} <- validate_count(query, elements) do
+          {:ok, %Query{query | result: elements}}
+        else
+          {:error, :stale_reference_error} ->
+            {:error, :stale_reference}
+        end
       rescue
         Wallaby.StaleReferenceException ->
           {:error, :stale_reference}
