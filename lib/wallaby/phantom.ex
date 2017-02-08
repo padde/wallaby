@@ -70,7 +70,6 @@ defmodule Wallaby.Phantom do
   end
 
   defp default_pool_size do
-    4
-    # :erlang.system_info(:schedulers_online)
+    :erlang.system_info(:schedulers_online)
   end
 end

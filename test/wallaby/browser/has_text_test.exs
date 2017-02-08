@@ -7,11 +7,17 @@ defmodule Wallaby.Browser.HasTextTest do
   end
 
   @h1 Query.css("h1")
+  @body Query.css("body")
 
   describe "has_text/3" do
     test "checks if the query has the specified text", %{page: page} do
       assert page
       |> has_text?(@h1, "Page 1")
+    end
+
+    test "matches against all of the inner text", %{page: page} do
+      assert page
+      |> has_text?(@body, "Test Div")
     end
   end
 

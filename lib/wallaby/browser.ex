@@ -254,12 +254,16 @@ defmodule Wallaby.Browser do
     parent
     |> find(query)
     |> click
+
+    parent
   end
   def select(parent, locator, [option: option_text]=opts) do
     parent
     |> find(Query.select(locator, opts))
     |> find(Query.option(option_text, []))
     |> click
+
+    parent
   end
 
   @doc """
@@ -269,8 +273,6 @@ defmodule Wallaby.Browser do
   @spec click_link(parent, locator, opts) :: parent
 
   def click_link(parent, locator, opts) when is_binary(locator) do
-    IO.puts("Clicking link")
-
     parent
     |> find(Query.link(locator, opts))
     |> click
@@ -278,8 +280,6 @@ defmodule Wallaby.Browser do
     parent
   end
   def click_link(parent, locator) when is_binary(locator) do
-    IO.puts("Clicking link")
-
     parent
     |> find(Query.link(locator, []))
     |> click
@@ -455,6 +455,9 @@ defmodule Wallaby.Browser do
     {:ok, _} = Driver.send_keys(parent, keys)
     parent
   end
+  def send_keys(parent, text) when is_binary(text) do
+    send_keys(parent, [text])
+  end
 
   defdelegate send_text(parent, text), to: __MODULE__, as: :send_keys
 
@@ -478,9 +481,17 @@ defmodule Wallaby.Browser do
   @doc """
   Clicks a element.
   """
+  @spec click(parent, locator) :: parent
   @spec click(parent, Query.t) :: parent
   @spec click(Element.t) :: Element.t
 
+  def click(parent, locator) when is_binary(locator) do
+    parent
+    |> find(Query.button(locator))
+    |> click()
+
+    parent
+  end
   def click(parent, query) do
     parent
     |> find(query)
@@ -598,6 +609,9 @@ defmodule Wallaby.Browser do
   def find(parent, css) when is_binary(css) do
     find(parent, Query.css(css))
   end
+  def find(parent, {:xpath, xpath}) do
+    find(parent, Query.xpath(xpath))
+  end
   def find(parent, %Query{}=query) do
     case execute_query(parent, query) do
       {:ok, query} ->
@@ -684,7 +698,14 @@ defmodule Wallaby.Browser do
     |> has_text?(text)
   end
   def has_text?(%Element{}=element, text) when is_binary(text) do
-    text(element) == text || has?(element, Query.text(text))
+    {_, value} = retry fn ->
+      cond do
+        text(element) =~ text -> {:ok, true}
+        true                  -> {:error, false}
+      end
+    end
+
+    value
   end
 
   @doc """
@@ -834,9 +855,6 @@ defmodule Wallaby.Browser do
              {:ok, elements} <- validate_text(query, elements),
              {:ok, elements} <- validate_count(query, elements) do
           {:ok, %Query{query | result: elements}}
-        else
-          {:error, :stale_reference_error} ->
-            {:error, :stale_reference}
         end
       rescue
         Wallaby.StaleReferenceException ->
