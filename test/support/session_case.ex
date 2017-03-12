@@ -7,8 +7,8 @@ defmodule Wallaby.SessionCase do
     end
   end
 
-  setup do
-    {:ok, session} = Wallaby.start_session
+  setup context do
+    {:ok, session} = Wallaby.start_session(context: Map.take(context, [:case, :describe, :test]))
 
     on_exit fn ->
       Wallaby.end_session(session)

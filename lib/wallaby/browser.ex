@@ -457,9 +457,9 @@ defmodule Wallaby.Browser do
   def take_screenshot(screenshotable) do
     image_data =
       screenshotable
-      |> Driver.take_screenshot
+      |> Driver.take_screenshot()
 
-    path = path_for_screenshot()
+    path = path_for_screenshot(screenshotable)
     File.write! path, image_data
 
     Map.update(screenshotable, :screenshots, [], &(&1 ++ [path]))
@@ -1057,10 +1057,28 @@ defmodule Wallaby.Browser do
     Application.get_env(:wallaby, :base_url) || ""
   end
 
-  defp path_for_screenshot do
+  def path_for_screenshot(screenshotable) do
     File.mkdir_p!(screenshot_dir())
-    "#{screenshot_dir()}/#{:erlang.system_time}.png"
+    "#{screenshot_dir()}/#{basename_for_screenshot(screenshotable)}#{:erlang.system_time}.png"
   end
+
+  defp basename_for_screenshot(%Session{context: context}) do
+    basename =
+      context
+      |> Map.values()
+      |> Enum.map(fn name ->
+        name
+        |> to_string()
+        |> String.downcase()
+        |> String.replace_leading("elixir.", "")
+        |> String.replace(~r/[\.\s]/, "_")
+      end)
+      |> Enum.filter(&(String.length(&1) > 0))
+      |> Enum.join("_")
+
+    "#{basename}_"
+  end
+  defp basename_for_screenshot(_screenshotable), do: nil
 
   defp screenshot_dir do
     Application.get_env(:wallaby, :screenshot_dir) || "#{File.cwd!()}/screenshots"
