@@ -296,6 +296,19 @@ defmodule Wallaby.Phantom.Driver do
   end
 
   @doc """
+  # Executes javascript synchoronously in the context of the PhantomJS `page`
+  # object, taking as arguments the script to execute, and optionally a list of
+  # arguments available in the script via `arguments`
+  """
+  def execute_phantom_script(session, script, arguments \\ []) do
+    check_logs! session, fn ->
+      with {:ok, resp} <- request(:post, "#{session.session_url}/phantom/execute", %{script: script, args: arguments}),
+           {:ok, value} <- Map.fetch(resp, "value"),
+        do: {:ok, value}
+    end
+  end
+
+  @doc """
   Sends a list of key strokes to active element
   """
   def send_keys(%Session{}=session, keys) when is_list(keys) do

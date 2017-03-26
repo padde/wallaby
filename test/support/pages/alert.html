@@ -6,16 +6,24 @@
   <body>
     <h1>Alert Test</h1>
     <a id='alert' href=# onclick="alert('this is an alert')")>Alert</a>
+    <a id='confirm' href=# onclick="doConfirm()">Confirm</a>
     <a id='prompt' href=# onclick="doPrompt()">Prompt</a>
     <p id='result'></p>
     <script>
-    function doPrompt() {
-      var name = prompt("name", "");
-        if (name != null) {
-            document.getElementById("result").innerHTML =
-            "Hello " + name;
-        }
+    function doConfirm() {
+      var confirmed = confirm("Are you sure?");
+      if (confirmed) {
+        document.getElementById("result").innerHTML = "Yes";
+      } else {
+        document.getElementById("result").innerHTML = "No";
+      }
     }
-</script>
+    function doPrompt() {
+      var name = prompt("What's your name?", "");
+      if (name != null) {
+        document.getElementById("result").innerHTML = "Hello " + name;
+      }
+    }
+    </script>
   </body>
 </html>
